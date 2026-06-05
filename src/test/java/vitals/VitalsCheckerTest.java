@@ -1,6 +1,7 @@
 package vitals;
 
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
@@ -57,5 +58,10 @@ public class VitalsCheckerTest {
   @Test
   public void testFailureWhenAnyVitalOutOfRange() {
     assertTrue(VitalsChecker.firstCriticalVitalMessage(98.6f, 70f, 89f) != null);
+  }
+
+  @Test
+  public void testVitalsNotOkWhenVitalIsOutOfRangeWithNoAlertDelay() throws InterruptedException {
+    assertFalse(VitalsChecker.vitalsOk(98.6f, 70f, 89f, 0, 0));
   }
 }

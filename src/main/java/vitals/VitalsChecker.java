@@ -7,12 +7,23 @@ public abstract class VitalsChecker {
   private static final float MIN_PULSE_RATE = 60f;
   private static final float MAX_PULSE_RATE = 100f;
   private static final float MIN_SPO2 = 90f;
+  private static final int DEFAULT_ALERT_BLINKS = 6;
+  private static final long DEFAULT_ALERT_DELAY_MILLIS = 1000;
 
   static boolean vitalsOk(float temperature, float pulseRate, float spo2) 
       throws InterruptedException {
+    return vitalsOk(temperature, pulseRate, spo2, DEFAULT_ALERT_BLINKS, DEFAULT_ALERT_DELAY_MILLIS);
+  }
+
+  static boolean vitalsOk(
+      float temperature,
+      float pulseRate,
+      float spo2,
+      int alertBlinkCount,
+      long alertDelayMillis) throws InterruptedException {
     String criticalVitalMessage = firstCriticalVitalMessage(temperature, pulseRate, spo2);
     if (criticalVitalMessage != null) {
-      triggerAlert(criticalVitalMessage);
+      triggerAlert(criticalVitalMessage, alertBlinkCount, alertDelayMillis);
       return false;
     }
     return true;
@@ -35,13 +46,14 @@ public abstract class VitalsChecker {
     return value < min || value > max;
   }
 
-  private static void triggerAlert(String alertMessage) throws InterruptedException {
+  private static void triggerAlert(String alertMessage, int blinkCount, long delayMillis)
+      throws InterruptedException {
     System.out.println(alertMessage);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < blinkCount; i++) {
       System.out.print("\r* ");
-      Thread.sleep(1000);
+      Thread.sleep(delayMillis);
       System.out.print("\r *");
-      Thread.sleep(1000);
+      Thread.sleep(delayMillis);
     }
   }
 }
